@@ -14,9 +14,12 @@ public class Data {
 	public static final String InvalidLoginWithoutAT = "guilherme.machadodigitalbusiness.com.br";
 	public static final String BlankLogin = "  ";
 	public static final String EmptyLogin = "";
-	public static final String InvalidLoginWithoutDotCom = "guilherme.machado@digitalbusiness";
-	public static final String InvalidLoginSPECIAL = "guilherme.machado☎@digitalbusiness.com.br";
-	public static final String InvalidLoginSPECIAL2 = "guilherme.machado@digita☎lbusiness.com.br";
+	public static final String InvalidLoginWithoutExtension = "guilherme.machado@digitalbusiness";
+	public static final String InvalidLoginEmoji = "guilherme.machado☎@digitalbusiness.com.br";
+	public static final String InvalidLoginEmoji2 = "guilherme.machado@digita☎lbusiness.com.br";
+	public static final String InvalidLoginSpecial = "guilherme.machado#@digitalbusiness.com.br";
+	public static final String InvalidLoginSpecial2 = "guilherme.machado@#digitalbusiness.com.br";
+	public static final String InvalidLoginWithBlankChars = "guilherme.machado @ digitalbusiness .com.br";
 	
 	//Invalid Passwords
 	public static final String InvalidPassword = "123";

@@ -7,6 +7,9 @@ import model.Authentication;
 import static constants.Endpoints.*;
 import static utils.Data.*;
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 public class PasswordResetTest extends Environment{
 	private static Authentication reset = new Authentication();
@@ -22,6 +25,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("OK"))
+			.body("messages[0].text", is("E-mail sent"))
 			.statusCode(200);
 	}
 	
@@ -36,6 +43,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -49,6 +60,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -62,6 +77,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -75,6 +94,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -88,6 +111,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+			.assertThat()
+		.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -101,6 +128,10 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
@@ -114,12 +145,16 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
 	@Test
 	public void naoResetarSenhaComEmailSemPontoCom() {
-		reset.setLogin(InvalidLoginWithoutDotCom);
+		reset.setLogin(InvalidLoginWithoutExtension);
 	
 		given()
 			.body(reset)
@@ -127,12 +162,16 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
 	@Test
 	public void naoResetarSenhaCaracteresEspeciaisNoEmailAntesDoArroba() {
-		reset.setLogin(InvalidLoginSPECIAL);
+		reset.setLogin(InvalidLoginEmoji);
 	
 		given()
 			.body(reset)
@@ -140,12 +179,16 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 	
 	@Test
 	public void naoResetarSenhaCaracteresEspeciaisNoEmailDepoisDoArroba() {
-		reset.setLogin(InvalidLoginSPECIAL2);
+		reset.setLogin(InvalidLoginEmoji2);
 	
 		given()
 			.body(reset)
@@ -153,6 +196,27 @@ public class PasswordResetTest extends Environment{
 			.post(PASSWORD_RESET)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoResetarSenhaEnviandoEmailComEspacos() {
+		reset.setLogin(InvalidLoginWithBlankChars);
+	
+		given()
+			.body(reset)
+		.when()
+			.post(PASSWORD_RESET)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body("status", is("BadRequest"))
+			.body("messages[0].text", is("User not found"))
 			.statusCode(400);
 	}
 

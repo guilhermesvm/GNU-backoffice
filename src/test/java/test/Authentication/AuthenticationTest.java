@@ -23,24 +23,14 @@ public class AuthenticationTest extends Environment{
 			.post(AUTHENTICATION)
 		.then()
 			.log().all()
-			.statusCode(200);
-	}
-	
-	@Test
-	public void fazerLoginEVerificarToken() {
-		login = loginAccount();
-		
-		given()
-			.body(login)
-		.when()
-			.post(AUTHENTICATION)
-		.then()
-			.log().all()
+		.assertThat()
 			.statusCode(200)
+			.body(is(not(nullValue())))
+			.body(containsString("content"))
 			.body("content.token", is(not(nullValue())))
-			.extract()
-				.path("content.token");
-	}
+			.body("content.token", matchesPattern("^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+$"))
+			;
+	}		
 	
 	@Test
 	public void naoFazerLoginComEmailInvalido() {
@@ -155,6 +145,34 @@ public class AuthenticationTest extends Environment{
 	}
 	
 	@Test
+	public void naoFazerLoginComEmailEmBranco() {
+		login.setLogin(BlankLogin);
+		login.setPassword(ValidPassword);
+		
+		given()
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoFazerLoginComSenhaEmBranco() {
+		login.setLogin(ValidLogin);
+		login.setPassword(BlankPassword);
+		
+		given()
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+			.statusCode(401);
+	}
+	
+	@Test
 	public void naoFazerLoginComCredenciaisVazias() {
 		login.setLogin(EmptyLogin);
 		login.setPassword(EmptyPassword);
@@ -169,8 +187,36 @@ public class AuthenticationTest extends Environment{
 	}
 	
 	@Test
-	public void naoFazerLoginEmailCadastradoSemPontoCom() {
-		login.setLogin(InvalidLoginWithoutDotCom);
+	public void naoFazerLoginComEmailVazio() {
+		login.setLogin(EmptyLogin);
+		login.setPassword(ValidPassword);
+		
+		given()
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoFazerLoginComSenhaVazia() {
+		login.setLogin(ValidLogin);
+		login.setPassword(EmptyPassword);
+		
+		given()
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoFazerLoginEmailCadastradoSemDominio() {
+		login.setLogin(InvalidLoginWithoutExtension);
 		login.setPassword(ValidPassword);
 		
 		given()
@@ -184,7 +230,7 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCaracteresEspeciaisNoEmailAntesDoArroba() {
-		login.setLogin(InvalidLoginSPECIAL);
+		login.setLogin(InvalidLoginEmoji);
 		login.setPassword(ValidPassword);
 		
 		given()
@@ -197,8 +243,22 @@ public class AuthenticationTest extends Environment{
 	}
 	
 	@Test
-	public void naoFazerLoginComCaracteresEspeciaisNoEmailDepoisDoArroba_BUG() {
-		login.setLogin(InvalidLoginSPECIAL2);
+	public void naoFazerLoginComCaracteresEspeciaisNoEmailDepoisDoArroba() {
+		login.setLogin(InvalidLoginEmoji2);
+		login.setPassword(ValidPassword);
+		
+		given()
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoFazerLoginComEspacosNoEmail() {
+		login.setLogin(InvalidLoginWithBlankChars);
 		login.setPassword(ValidPassword);
 		
 		given()

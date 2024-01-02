@@ -4,6 +4,10 @@ package test.EventSpaceReservation;
 import static constants.Endpoints.*;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static services.LoginService.login;
 import static utils.Data.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,6 +35,14 @@ public class EventSpaceReservationTest extends Environment {
 			.get(EVENT_RESERVATION)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("count"))
+			.body("count", is(not(nullValue())))
+			.body(containsString("pageCount"))
+			.body("pageCount", is(not(nullValue())))
+			.body(containsString("content"))
+			.body("content", is(not(nullValue())))
 			.statusCode(200);
 	}
 	
@@ -42,6 +54,11 @@ public class EventSpaceReservationTest extends Environment {
 			.get(EVENT_RESERVATION)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
 			.statusCode(401);
 	}
 	
@@ -54,6 +71,13 @@ public class EventSpaceReservationTest extends Environment {
 			.get(EVENT_RESERVATION_ID)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("content"))
+			.body("content", is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is(not(nullValue())))
+			.body("status", is("OK"))
 			.statusCode(200);
 	}
 	
@@ -66,6 +90,11 @@ public class EventSpaceReservationTest extends Environment {
 			.get(EVENT_RESERVATION_ID)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
 			.statusCode(401);
 	}
 	
@@ -78,7 +107,12 @@ public class EventSpaceReservationTest extends Environment {
 			.get(EVENT_RESERVATION_ID)
 		.then()
 			.log().all()
-			.statusCode(400);
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Reservation not found"))
+			.statusCode(401);
 	}
 	
 

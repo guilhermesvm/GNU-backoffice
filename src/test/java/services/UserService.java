@@ -1,6 +1,5 @@
 package services;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import model.Authentication;
@@ -9,6 +8,7 @@ import static constants.Endpoints.DELETE_USER;
 import static constants.Endpoints.USERS;
 import static io.restassured.RestAssured.given;
 import static utils.DataFaker.*;
+import static services.LoginService.login;
 
 @Getter
 @Setter
@@ -16,34 +16,23 @@ public class UserService {
 	public static User user = new User();
 	public static User alteracao = new User();
 	public static Authentication login = new Authentication();
-	static List<Integer> randomAdminSectionIds = randomAdminSections();
-	static List<Integer> randomSubjectsIds = randomSubjects();
 
 	
 	public static User createUser() {
-		user.setEmail(emailFaker);
-		user.setName(nameFaker);
-		user.setAdminSectionIds(randomAdminSectionIds);
-		user.setSubjectIds(randomSubjectsIds);
+		user.setEmail(fakerEmail);
+		user.setName(fakerName);
+		user.setAdminSectionIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		return user;
 	}
 	
-	public static User updateUser(boolean status) {
-		alteracao.setName(nameFaker);
-		alteracao.setActive(status);
-		alteracao.setAdminSectionIds(randomAdminSectionIds);
-		alteracao.setSubjectIds(randomSubjectsIds);
-		return alteracao;
-	}
-	
 	public static Integer creatingUser() {
-		String accessToken = LoginService.login();
+		String accessToken = login();
 
-		
-		user.setEmail(emailFaker);
-		user.setName(nameFaker);
-		user.setAdminSectionIds(randomAdminSectionIds);
-		user.setAdminSectionIds(randomSubjectsIds);
+		user.setEmail(fakerEmail);
+		user.setName(fakerName);
+		user.setAdminSectionIds(fakerAdminSectionIds);
+		user.setAdminSectionIds(fakerSubjectsIds);
 		
 		Integer id =
 		given()
@@ -58,15 +47,23 @@ public class UserService {
 		return id;
 	}
 	
+	public static User updateUser(boolean status) {
+		alteracao.setName(fakerName);
+		alteracao.setActive(status);
+		alteracao.setAdminSectionIds(fakerAdminSectionIds);
+		alteracao.setSubjectIds(fakerSubjectsIds);
+		return alteracao;
+	}
+	
+	
+	
 	public static void deletingUser(Integer id) {
-		String accessToken = LoginService.login();
+		String accessToken = login();
 		given()
 			.pathParam("id", id)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.delete(DELETE_USER)
-		.then()
-			.log().all()
 			;
 	}
 }

@@ -32,7 +32,6 @@ public class LoginService {
 		login.setLogin(ValidLogin);
 		login.setPassword(ValidPassword);
 		return login;
-		
 	}
 	
 	

@@ -9,7 +9,6 @@ import lombok.Data;
 
 @Data
 public class AdminSection {
-	
 	private String name;
 	private List<String> roles;
 	

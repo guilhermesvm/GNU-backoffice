@@ -31,7 +31,7 @@ public class Endpoints {
 	
 	//Endpoint Sponsorships
 	public static final String SPONSORSHIPS = "/api/v1/sponsorships";
-	public static final String SPONSORSHIP_ID = "/api/v1/sponsorships/id";
+	public static final String SPONSORSHIP_ID = "/api/v1/sponsorships/{id}";
 	
 	
 	

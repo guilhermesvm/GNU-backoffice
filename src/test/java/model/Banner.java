@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Data
 public class Banner {
+	@JsonProperty(value="type", access = Access.WRITE_ONLY)
 	private String type;
 	private String link;
 	private File file;
