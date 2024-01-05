@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import services.Environment;
 import model.Authentication;
+
+import static constants.Data.*;
 import static constants.Endpoints.*;
-import static utils.Data.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -14,10 +15,9 @@ import static org.hamcrest.Matchers.nullValue;
 public class PasswordResetTest extends Environment{
 	private static Authentication reset = new Authentication();
 	
-	
 	@Test
 	public void resetarSenha() {
-		reset.setLogin(ValidLogin);
+		reset.setLogin(validLogin2);
 	
 		given()
 			.body(reset)
@@ -32,10 +32,9 @@ public class PasswordResetTest extends Environment{
 			.statusCode(200);
 	}
 	
-	
 	@Test
 	public void naoResetarSenhaComLoginInexistente() {
-		reset.setLogin(InvalidLogin);
+		reset.setLogin(invalidLogin);
 	
 		given()
 			.body(reset)
@@ -52,7 +51,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailCAPSLOCK() {
-		reset.setLogin(InvalidLoginCAPSLOCK);
+		reset.setLogin(invalidLoginCAPSLOCK);
 	
 		given()
 			.body(reset)
@@ -69,7 +68,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailCAPSLOCKAntesDoArroba() {
-		reset.setLogin(InvalidLoginCAPSLOCK2);
+		reset.setLogin(invalidLoginCAPSLOCK2);
 	
 		given()
 			.body(reset)
@@ -86,7 +85,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailCAPSLOCKDepoisDoArroba() {
-		reset.setLogin(InvalidLoginCAPSLOCK3);
+		reset.setLogin(invalidLoginCAPSLOCK3);
 	
 		given()
 			.body(reset)
@@ -103,7 +102,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailSemArroba() {
-		reset.setLogin(InvalidLoginWithoutAT);
+		reset.setLogin(invalidLoginWithoutAT);
 	
 		given()
 			.body(reset)
@@ -120,7 +119,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailEmBranco() {
-		reset.setLogin(BlankLogin);
+		reset.setLogin(blankLogin);
 	
 		given()
 			.body(reset)
@@ -137,7 +136,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaComEmailVazio() {
-		reset.setLogin(EmptyLogin);
+		reset.setLogin(emptyLogin);
 	
 		given()
 			.body(reset)
@@ -153,8 +152,8 @@ public class PasswordResetTest extends Environment{
 	}
 	
 	@Test
-	public void naoResetarSenhaComEmailSemPontoCom() {
-		reset.setLogin(InvalidLoginWithoutExtension);
+	public void naoResetarSenhaComEmailSemPontoCom_BUG() {
+		reset.setLogin(invalidLoginWithoutExtension);
 	
 		given()
 			.body(reset)
@@ -171,7 +170,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaCaracteresEspeciaisNoEmailAntesDoArroba() {
-		reset.setLogin(InvalidLoginEmoji);
+		reset.setLogin(invalidLoginEmoji);
 	
 		given()
 			.body(reset)
@@ -188,7 +187,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaCaracteresEspeciaisNoEmailDepoisDoArroba() {
-		reset.setLogin(InvalidLoginEmoji2);
+		reset.setLogin(invalidLoginEmoji2);
 	
 		given()
 			.body(reset)
@@ -205,7 +204,7 @@ public class PasswordResetTest extends Environment{
 	
 	@Test
 	public void naoResetarSenhaEnviandoEmailComEspacos() {
-		reset.setLogin(InvalidLoginWithBlankChars);
+		reset.setLogin(invalidLoginWithBlankChars);
 	
 		given()
 			.body(reset)

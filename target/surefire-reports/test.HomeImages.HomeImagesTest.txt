@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: test.HomeImages.HomeImagesTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 52.314 s - in test.HomeImages.HomeImagesTest

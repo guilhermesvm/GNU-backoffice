@@ -4,19 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 import model.Authentication;
 
-
+import static constants.Data.*;
 import static constants.Endpoints.AUTHENTICATION;
 import static io.restassured.RestAssured.given;
-import static utils.Data.*;
 
 @Getter
 @Setter
 public class LoginService {
 	private static Authentication login = new Authentication();
 	
+	public static Authentication loginAccount() {
+		login.setLogin(validLogin);
+		login.setPassword(validPassword);
+		return login;
+	}
+	
 	public static String login() {
-		login.setLogin(ValidLogin);
-		login.setPassword(ValidPassword);
+		login = loginAccount();
 		
 		String token =
 		given()
@@ -26,12 +30,6 @@ public class LoginService {
 		.then()
 			.extract().path("content.token");
 		return token;
-	}
-	
-	public static Authentication loginAccount() {
-		login.setLogin(ValidLogin);
-		login.setPassword(ValidPassword);
-		return login;
 	}
 	
 	

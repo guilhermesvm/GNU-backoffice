@@ -2,12 +2,14 @@ package test.Authentication;
 
 import static org.hamcrest.Matchers.*;
 import static io.restassured.RestAssured.*;
+import static constants.Data.*;
 import static constants.Endpoints.*;
-import static utils.Data.*;
 import static services.LoginService.*;
 
 import model.Authentication;
 import org.junit.jupiter.api.Test;
+
+import io.restassured.module.jsv.JsonSchemaValidator;
 import services.Environment;
 
 public class AuthenticationTest extends Environment{
@@ -29,13 +31,13 @@ public class AuthenticationTest extends Environment{
 			.body(containsString("content"))
 			.body("content.token", is(not(nullValue())))
 			.body("content.token", matchesPattern("^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+$"))
-			;
+			.body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/authentication/post/200.json"));
 	}		
 	
 	@Test
 	public void naoFazerLoginComEmailInvalido() {
-		login.setLogin(InvalidLogin);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLogin);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -48,8 +50,8 @@ public class AuthenticationTest extends Environment{
 
 	@Test
 	public void naoFazerLoginComSenhaInvalida() {
-		login.setLogin(ValidLogin);
-		login.setPassword(InvalidPassword);
+		login.setLogin(validLogin);
+		login.setPassword(invalidPassword);
 		
 		given()
 			.body(login)
@@ -62,8 +64,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEmailEmCAPSLOCK() {
-		login.setLogin(InvalidLoginCAPSLOCK);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginCAPSLOCK);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -76,8 +78,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEmailEmCAPSLOCKAntesDoArroba() {
-		login.setLogin(InvalidLoginCAPSLOCK2);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginCAPSLOCK2);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -90,8 +92,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEmailEmCAPSLOCKDepoisDoArroba() {
-		login.setLogin(InvalidLoginCAPSLOCK3);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginCAPSLOCK3);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -104,8 +106,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCredenciaisInvalidas() {
-		login.setLogin(InvalidLogin);
-		login.setPassword(InvalidPassword);
+		login.setLogin(invalidLogin);
+		login.setPassword(invalidPassword);
 		
 		given()
 			.body(login)
@@ -118,8 +120,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginSemArroba() {
-		login.setLogin(InvalidLoginWithoutAT);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginWithoutAT);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -132,8 +134,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCredenciaisEmBranco() {
-		login.setLogin(BlankLogin);
-		login.setPassword(BlankPassword);
+		login.setLogin(blankLogin);
+		login.setPassword(blankPassword);
 		
 		given()
 			.body(login)
@@ -146,8 +148,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEmailEmBranco() {
-		login.setLogin(BlankLogin);
-		login.setPassword(ValidPassword);
+		login.setLogin(blankLogin);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -160,8 +162,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComSenhaEmBranco() {
-		login.setLogin(ValidLogin);
-		login.setPassword(BlankPassword);
+		login.setLogin(validLogin);
+		login.setPassword(blankPassword);
 		
 		given()
 			.body(login)
@@ -174,8 +176,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCredenciaisVazias() {
-		login.setLogin(EmptyLogin);
-		login.setPassword(EmptyPassword);
+		login.setLogin(emptyLogin);
+		login.setPassword(emptyPassword);
 		
 		given()
 			.body(login)
@@ -188,8 +190,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEmailVazio() {
-		login.setLogin(EmptyLogin);
-		login.setPassword(ValidPassword);
+		login.setLogin(emptyLogin);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -202,8 +204,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComSenhaVazia() {
-		login.setLogin(ValidLogin);
-		login.setPassword(EmptyPassword);
+		login.setLogin(validLogin);
+		login.setPassword(emptyPassword);
 		
 		given()
 			.body(login)
@@ -216,8 +218,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginEmailCadastradoSemDominio() {
-		login.setLogin(InvalidLoginWithoutExtension);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginWithoutExtension);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -230,8 +232,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCaracteresEspeciaisNoEmailAntesDoArroba() {
-		login.setLogin(InvalidLoginEmoji);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginEmoji);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -244,8 +246,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComCaracteresEspeciaisNoEmailDepoisDoArroba() {
-		login.setLogin(InvalidLoginEmoji2);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginEmoji2);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)
@@ -258,8 +260,8 @@ public class AuthenticationTest extends Environment{
 	
 	@Test
 	public void naoFazerLoginComEspacosNoEmail() {
-		login.setLogin(InvalidLoginWithBlankChars);
-		login.setPassword(ValidPassword);
+		login.setLogin(invalidLoginWithBlankChars);
+		login.setPassword(validPassword);
 		
 		given()
 			.body(login)

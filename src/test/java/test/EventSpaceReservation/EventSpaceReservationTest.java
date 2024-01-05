@@ -1,6 +1,7 @@
 package test.EventSpaceReservation;
 
 
+import static constants.Data.*;
 import static constants.Endpoints.*;
 
 import static io.restassured.RestAssured.*;
@@ -9,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static services.LoginService.login;
-import static utils.Data.*;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import model.Authentication;
@@ -102,17 +103,17 @@ public class EventSpaceReservationTest extends Environment {
 	public void naoListarReservasSemIdValido() {
 		given()
 			.header("Authorization", "Bearer " + accessToken)
-			.pathParam("id", InvalidId)
+			.pathParam("id", invalidId)
 		.when()
 			.get(EVENT_RESERVATION_ID)
 		.then()
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("Messages"))
-			.body("Messages", is(not(nullValue())))
-			.body("Messages[0].Text", is("Reservation not found"))
-			.statusCode(401);
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Reservation not found"))
+			.statusCode(400);
 	}
 	
 

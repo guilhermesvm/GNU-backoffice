@@ -6,8 +6,8 @@ import model.User;
 import services.Environment;
 
 import static services.UserService.*;
-import static utils.Data.*;
-import static utils.DataFaker.*;
+import static constants.Data.*;
+import static constants.DataFaker.*;
 import static constants.Endpoints.*;
 import static services.LoginService.*;
 import static io.restassured.RestAssured.*;
@@ -17,15 +17,7 @@ public class UserTest extends Environment {
 	public static Authentication login = new Authentication();
 	public static User user = new User();
 	public static User alteracao = new User();
-	//public String accessToken = login.getToken();
 	public String accessToken = login();
-
-	
-//	@BeforeAll
-//	public static void fazerLogin() {
-//		String token = login();
-//		login.setToken(token);
-//	}
 
 	@Test
 	public void listarUsers() {
@@ -159,7 +151,7 @@ public class UserTest extends Environment {
 	public void naoListarUserSectionPorIdInvalido() {
 		given()
 			.header("Authorization", "Bearer " + accessToken)
-			.pathParam("id", InvalidId)
+			.pathParam("id", invalidId)
 		.when()
 			.get(USER_ID_SECTIONS)
 		.then()
@@ -175,7 +167,7 @@ public class UserTest extends Environment {
 
 	@Test
 	public void criarUsuario() {
-		user = createUser();
+		user = creatingUser();
 		
 		Integer id =
 		given()
@@ -200,12 +192,12 @@ public class UserTest extends Environment {
 		.and()
 			.extract().path("content.id")
 			;
-		deletingUser(id);
+		deleteUser(id);
 	}
 		
 	@Test
 	public void naoCriarUsuarioSemToken() {
-		user = createUser();
+		user = creatingUser();
 		
 		given()
 			.header("Authorization", "Bearer " + emptyToken)
@@ -225,10 +217,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComEmailJaExistente() {	
-		user.setEmail(ValidLogin);
+		user.setEmail(validLogin);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -249,10 +241,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComEmailSemArroba() {	
-		user.setEmail(InvalidLoginWithoutAT);
+		user.setEmail(invalidLoginWithoutAT);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -273,10 +265,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComEmailEmBranco() {	
-		user.setEmail(BlankLogin);
+		user.setEmail(blankLogin);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -297,10 +289,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComEmailVazio() {	
-		user.setEmail(EmptyLogin);
+		user.setEmail(emptyLogin);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -320,13 +312,12 @@ public class UserTest extends Environment {
 	}
 	
 	@Test
-	public void naoCriarUsuarioComEmailSemExtensao_BUG() {	
-		user.setEmail(InvalidLoginWithoutExtension);
+	public void naoCriarUsuarioComEmailSemExtensao() {	
+		user.setEmail(invalidLoginWithoutExtension);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
-		Integer id =
 		given()
 			.header("Authorization", "Bearer " + accessToken)
 			.body(user)
@@ -335,24 +326,21 @@ public class UserTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-//			.body(is(not(nullValue())))
-//			.body(containsString("status"))
-//			.body("status", is("BadRequest"))
-//			.body(containsString("messages"))
-//			.body("messages", is(not(nullValue())))
-//			.body("messages[0].text", is("Name or Email in wrong format"))
-//			.statusCode(400)
-		.and()
-		.extract().path("content.id");
-		deletingUser(id);
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
 	}
 	
 	@Test
 	public void naoCriarUsuarioComEmojiAntesDoArroba() {	
-		user.setEmail(InvalidLoginEmoji);
+		user.setEmail(invalidLoginEmoji);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -373,10 +361,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComEmojiDepoisDoArroba() {	
-		user.setEmail(InvalidLoginEmoji2);
+		user.setEmail(invalidLoginEmoji2);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -397,10 +385,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComCaracterEspecialAntesDoArroba() {	
-		user.setEmail(InvalidLoginSpecial);
+		user.setEmail(invalidLoginSpecial);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -421,10 +409,10 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoCriarUsuarioComCaracterEspecialDepoisDoArroba() {	
-		user.setEmail(InvalidLoginSpecial2);
+		user.setEmail(invalidLoginSpecial2);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -444,13 +432,12 @@ public class UserTest extends Environment {
 	}
 	
 	@Test
-	public void naoCriarUsuarioComEspacosEmBrancoAntesEDepoisDoArroba_BUG() {	
-		user.setEmail(InvalidLoginWithBlankChars);
+	public void naoCriarUsuarioComEspacosEmBrancoAntesEDepoisDoArroba() {	
+		user.setEmail(invalidLoginWithBlankChars);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
-		Integer id =
 		given()
 			.header("Authorization", "Bearer " + accessToken)
 			.body(user)
@@ -459,24 +446,22 @@ public class UserTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-//			.body(is(not(nullValue())))
-//			.body(containsString("status"))
-//			.body("status", is("BadRequest"))
-//			.body(containsString("messages"))
-//			.body("messages", is(not(nullValue())))
-//			.body("messages[0].text", is("Name or Email in wrong format"))
-//			.statusCode(400)
-		.and()
-		.extract().path("content.id");
-		deletingUser(id);
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400)
+			;
 	}
 	
 	@Test
-	public void naoCriarUsuarioComNomeInvalido() {	
+	public void naoCriarUsuarioComEmojiNoNome() {	
 		user.setEmail(fakerEmail);
-		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user.setName(InvalidFakerNameEmoji);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -494,35 +479,408 @@ public class UserTest extends Environment {
 			.body("messages[0].text", is("Name or Email in wrong format"))
 			.statusCode(400);
 	}
+	
+	@Test
+	public void naoCriarUsuarioComCaracterEspecialNoNome() {	
+		user.setEmail(fakerEmail);
+		user.setName(InvalidFakerNameSpecial);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	
+	@Test
+	public void naoCriarUsuarioComNumeroNoNome() {	
+		user.setEmail(fakerEmail);
+		user.setName(InvalidFakerNameNumber);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoCriarUsuarioComNomeEmBranco() {	
+		user.setEmail(fakerEmail);
+		user.setName(emptyName);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoCriarUsuarioComNomeVazio() {	
+		user.setEmail(fakerEmail);
+		user.setName(blankName);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoCriarUsuarioComNomeMenorQue2Caracteres() {	
+		user.setEmail(fakerEmail);
+		user.setName(shortName);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoCriarUsuarioComNomeMaiorQue50Caracteres() {	
+		user.setEmail(fakerEmail);
+		user.setName(longName);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
+		user.setSubjectIds(fakerSubjectsIds);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(user)
+		.when()
+			.post(USERS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name or Email in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void criarTokenDePrimeiroAcesso() {
+		Integer id = createUser();
+		given()
+			.header("Authorization", " Bearer " + accessToken)
+			.pathParam("id", id)
+		.when()
+			.post(CREATE_USER_EMAIL_FIRST_ACCESS)
+		.then()
+			.log().all()
+		.assertThat()
+		.statusCode(200)
+		;
+		deleteUser(id);
+	}
 
 
 	@Test
-	public void alterarUsuario() {
-		Integer id = creatingUser();
-		user.setId(id);
-
-		alteracao.setName("joaobatata");
-		alteracao.setActive(false);
-		alteracao.setAdminSectionIds(fakerAdminSectionIds);
+	public void alterarUsuarioCompleto() {
+		alteracao.setName(fakerName);
+		alteracao.setActive(fakerActive);
+		alteracao.setAdminSectionsIds(fakerAdminSectionIds);
 		alteracao.setSubjectIds(fakerSubjectsIds);
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
-			.pathParam("id", user.getId())
+			.pathParam("id", 34)
 		.when()
 			.patch(UPDATE_USER)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("OK"))
 			.statusCode(200)
-			.extract().path("content.id")
 			;
-		deletingUser(user.getId());
 	}
 	
+	@Test
+	public void alterarUsuarioApenasNome() {
+		alteracao.setName(fakerName);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("OK"))
+			.statusCode(200)
+			;
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeComEmoji() {
+		alteracao.setName(InvalidFakerNameEmoji);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeComCaracterEspecial() {
+		alteracao.setName(InvalidFakerNameEmoji);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeComNumero() {
+		alteracao.setName(InvalidFakerNameNumber);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeVazio_BUG() {
+		alteracao.setName(blankName);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeEmBranco() {
+		alteracao.setName(emptyName);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeMenorQue2Caracteres() {
+		alteracao.setName(shortName);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoAlterarUsuarioApenasNomeMaiorQue50Caracteres() {
+		alteracao.setName(shortName); alteracao.setActive(fakerActive);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("BadRequest"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in wrong format"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void alterarUsuarioApenasStatusAtivo() {
+		alteracao.setActive(true);
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("OK"))
+			.statusCode(200);
+	}
+	
+	@Test
+	public void alterarUsuarioApenasStatusInativo() {
+		alteracao.setActive(false);
+		alteracao.setAdminSectionsIds(fakerAdminSectionIds);;
+
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.body(alteracao)
+			.pathParam("id", 34)
+		.when()
+			.patch(UPDATE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("status"))
+			.body("status", is("OK"))
+			.statusCode(200);
+	}
+
 	@Test 
 	public void deletarUsuario() {
-		Integer id = creatingUser();
+		Integer id = createUser();
 		given()
 			.pathParam("id", id)
 			.header("Authorization", "Bearer " + accessToken)
@@ -530,8 +888,61 @@ public class UserTest extends Environment {
 			.delete(DELETE_USER)
 		.then()
 			.log().all()
-			.statusCode(200)
-			;
-
+			.statusCode(200);
+	}
+	
+	@Test 
+	public void naoDeletarUsuarioSemToken() {
+		given()
+			.pathParam("id", fakerId)
+			.header("Authorization", "Bearer " + emptyToken)
+		.when()
+			.delete(DELETE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test 
+	public void naoDeletarUsuarioInexistente() {
+		given()
+			.pathParam("id", invalidId)
+			.header("Authorization", "Bearer " + accessToken)
+		.when()
+			.delete(DELETE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User not found"))
+			.statusCode(400);
+	}
+	
+	@Test 
+	public void naoDeletarUsuarioQueJaFoiDeletado() {
+		Integer id = createUser();
+		
+		deleteUser(id);
+		
+		given()
+			.pathParam("id", id)
+			.header("Authorization", "Bearer " + accessToken)
+		.when()
+			.delete(DELETE_USER)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User not found"))
+			.statusCode(400);
 	}
 }

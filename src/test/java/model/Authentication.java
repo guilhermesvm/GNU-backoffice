@@ -13,4 +13,6 @@ public class Authentication {
 	
 	@JsonProperty(value = "content.token", access = Access.WRITE_ONLY) //Desserializa o token contido no Json "token: {token}"
 	private String token;
+	
+	private String newPassword;
 }

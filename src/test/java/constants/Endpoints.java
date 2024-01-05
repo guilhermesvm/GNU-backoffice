@@ -9,20 +9,18 @@ public class Endpoints {
 	
 	//Endpoint Users
 	public static final String USERS = "/api/v1/users";
-	
 	public static final String USER_ID = USERS + "/" + "{id}";
-	public static final String USER_ID_SECTIONS = USERS + "/" + "{id}" + "/sections";
-	public static final String CREATE_USER_EMAILACCESS = "/api/v1/users/{id}/first-access";
+	public static final String USER_ID_SECTIONS = "/api/v1/users/{id}/sections";
+	public static final String CREATE_USER_EMAIL_FIRST_ACCESS = "/api/v1/users/{id}/first-access";
 	public static final String CHECK_USER_FIRSTACCESS = "/api/v1/users/first-access";
-	public static final String INSERT_FIRSTACCESS_TOKEN = USERS + "/firstaccess/check";
-	public static final String CHANGE_PASSWORD = USERS + "/password";
-	public static final String UPDATE_USER = USERS + "/{id}";
-	public static final String DELETE_USER = USERS + "/{id}";
+	public static final String INSERT_FIRSTACCESS_TOKEN = "/api/v1/users/first-access/check";
+	public static final String CHANGE_PASSWORD = "/api/v1/users/password";
+	public static final String UPDATE_USER = "/api/v1/users/{id}";
+	public static final String DELETE_USER = "/api/v1/users/{id}";
 
-	
 	//Endpoint EventSpaceReservation
 	public static final String EVENT_RESERVATION = "/api/v1/reservations";
-	public static final String EVENT_RESERVATION_ID = EVENT_RESERVATION + "/" + "{id}" ;
+	public static final String EVENT_RESERVATION_ID = "/api/v1/reservations/{id}";
 
 	
 	//Endpoint HomeImages
@@ -33,7 +31,10 @@ public class Endpoints {
 	public static final String SPONSORSHIPS = "/api/v1/sponsorships";
 	public static final String SPONSORSHIP_ID = "/api/v1/sponsorships/{id}";
 	
+	//Endpoint AdminSections
+	public static final String ADMIN_SECTIONS = "/api/v1/sections";
+	public static final String ADMIN_SECTIONS_ID = "/api/v1/sections/{id}";
 	
-	
+
 
 }

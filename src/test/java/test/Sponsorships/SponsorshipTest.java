@@ -1,11 +1,9 @@
 package test.Sponsorships;
 
 import org.junit.jupiter.api.Test;
-import model.Authentication;
 import model.Banner;
-import services.BannerService;
+import services.SponsorshipService;
 import services.Environment;
-import static utils.DataFaker.*;
 import java.io.File;
 
 import static io.restassured.RestAssured.*;
@@ -15,22 +13,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static services.LoginService.login;
+import static services.SponsorshipService.*;
+import static constants.Data.*;
+import static constants.DataFaker.*;
 import static constants.Endpoints.*;
-import static utils.Data.*;
 
 public class SponsorshipTest extends Environment{
-	public static Authentication login = new Authentication();
 	public static Banner banner = new Banner();
-	public static File img = new File(bannerFile);
 	public String accessToken = login();
-	//public String accessToken = login.getToken();
-	
-	/*@BeforeAll
-	public static void fazerLogin() {
-		String token = login();
-		login.setToken(token);
-	}*/
-	
+
 	@Test
 	public void listarBanners() {
 		given()
@@ -67,20 +58,107 @@ public class SponsorshipTest extends Environment{
 	}
 	
 	@Test
-	public void alterarBanner() {
+	public void alterarBannerCompleto() {
+		File img = new File(bannerFile2);
+		
 		banner.setId(117);
-		//banner.setFile(img);
-		//banner.setLink(linkFaker);
-		//banner.setType(typeFaker);//not working
-		System.out.println(typeFaker);
+		banner.setLink(linkFaker);
+//	    banner.setType(typeFaker);//not working
+	    
+	    System.out.println(typeFaker);
+	    
+	    given()
+	        .header("Authorization", "Bearer " + accessToken)
+	        .contentType("multipart/form-data")
+	        .multiPart("id", banner.getId())
+	        .multiPart("file", img, "image/jpg")
+	        .multiPart("link", banner.getLink())
+	        .multiPart("content.type", "events")
+	    .when()
+	        .put(SPONSORSHIPS)
+	    .then()
+	        .log().all()
+	        .assertThat()
+	        .body(is(not(nullValue())))
+	        .body(containsString("content"))
+	        .body("content", is(not(nullValue())))
+	        .body("content.id", is(not(nullValue())))
+	        .body("content.id", is(instanceOf(Integer.class)))
+	        .body("content.image", is(not(nullValue())))
+	        .body("content.image", is(instanceOf(String.class)))
+	        .body("content.link", is(not(nullValue())))
+	        .body("content.link", is(instanceOf(String.class)))
+	        .body("content.type", is(instanceOf(String.class)))
+	        .body(containsString("status"))
+	        .body("status", is("OK"))
+	        .statusCode(200);
+	}
 
+	
+//	@Test
+//	public void alterarBannerApenasFile() {
+//		banner.setId(117);
+//		banner.setFile(img);
+//		
+//		given()
+//			.header("Authorization", "Bearer " + accessToken)
+//			.contentType("multipart/form-data")
+//			.multiPart("id", banner.getId())
+//	        .multiPart("file", banner.getFile())
+//		.when()
+//			.put(SPONSORSHIPS)
+//		.then()
+//			.log().all()
+//		.assertThat()
+//			.body(is(not(nullValue())))
+//			.body(containsString("content"))
+//			.body("content", is(not(nullValue())))
+//			.body("content.id", is(not(nullValue())))
+//			.body("content.id", is(instanceOf(Integer.class)))
+//			.body("content.image", is(not(nullValue())))
+//			.body("content.image", is(instanceOf(String.class)))
+//			.body(containsString("status"))
+//			.body("status", is("OK"))
+//			.statusCode(200);
+//		}
+	
+//	@Test
+//	public void alterarBannerApenasFileArquivoInvalido() {
+//		banner.setFile(img2);
+//		banner.setId(117);
+//		
+//		given()
+//			.header("Authorization", "Bearer " + accessToken)
+//			.contentType("multipart/form-data")
+//			.multiPart("id", banner.getId())
+//			.multiPart("file", banner.getFile())
+//		.when()
+//			.put(SPONSORSHIPS)
+//		.then()
+//			.log().all()
+//		.assertThat()
+////			.body(is(not(nullValue())))
+////			.body(containsString("content"))
+////			.body("content", is(not(nullValue())))
+////			.body("content.id", is(not(nullValue())))
+////			.body("content.id", is(instanceOf(Integer.class)))
+////			.body("content.image", is(not(nullValue())))
+////			.body("content.image", is(instanceOf(String.class)))
+////			.body(containsString("status"))
+////			.body("status", is("OK"))
+//			.statusCode(200);
+//		}
+	
+	@Test
+	public void alterarBannerLink() {
+		banner.setId(117);
+		banner.setLink(linkFaker);
+		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("id", banner.getId())
-	       // .multiPart("file", banner.getFile())
-	        //.multiPart("link", banner.getLink())
-	        //.multiPart("type", "venue")
+	        .multiPart("link", banner.getLink())
 		.when()
 			.put(SPONSORSHIPS)
 		.then()
@@ -94,6 +172,7 @@ public class SponsorshipTest extends Environment{
 			.body("content.image", is(not(nullValue())))
 			.body("content.image", is(instanceOf(String.class)))
 			.body("content.link", is(not(nullValue())))
+			.body("content.link", is(instanceOf(String.class)))
 			.body("content.type", is(instanceOf(String.class)))
 			.body(containsString("status"))
 			.body("status", is("OK"))
@@ -101,8 +180,94 @@ public class SponsorshipTest extends Environment{
 		}
 	
 	@Test
+	public void alterarBannerLinkInvalidoEmoji_BUG() {
+		banner.setId(117);
+		banner.setLink(invalidLinkEmoji);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.contentType("multipart/form-data")
+			.multiPart("id", banner.getId())
+	        .multiPart("link", banner.getLink())
+		.when()
+			.put(SPONSORSHIPS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.statusCode(400);
+		}
+	
+	@Test
+	public void alterarBannerLinkInvalidoSemDominio_BUG() {
+		banner.setId(117);
+		banner.setLink(invalidLinkWithoutDomain);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.contentType("multipart/form-data")
+			.multiPart("id", banner.getId())
+	        .multiPart("link", banner.getLink())
+		.when()
+			.put(SPONSORSHIPS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.statusCode(400);
+		}
+	
+	@Test
+	public void alterarBannerLinkInvalidoComCaracterEspecial_BUG() {
+		banner.setId(117);
+		banner.setLink(invalidLinkSpecial);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.contentType("multipart/form-data")
+			.multiPart("id", banner.getId())
+	        .multiPart("link", banner.getLink())
+		.when()
+			.put(SPONSORSHIPS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.statusCode(400);
+		}
+	
+//	@Test
+//	public void alterarBannerType() {
+//		banner.setId(117);
+//		banner.setType(typeFaker);//not working
+//		System.out.println(typeFaker);
+//		
+//		given()
+//			.header("Authorization", "Bearer " + accessToken)
+//			.contentType("multipart/form-data")
+//			.multiPart("id", banner.getId())
+//	        .multiPart("type", banner.getType())
+//		.when()
+//			.put(SPONSORSHIPS)
+//		.then()
+//			.log().all()
+//		.assertThat()
+//			.body(is(not(nullValue())))
+//			.body(containsString("content"))
+//			.body("content", is(not(nullValue())))
+//			.body("content.id", is(not(nullValue())))
+//			.body("content.id", is(instanceOf(Integer.class)))
+//			.body("content.image", is(not(nullValue())))
+//			.body("content.image", is(instanceOf(String.class)))
+//			.body("content.type", is(instanceOf(String.class)))
+//			.body(containsString("status"))
+//			.body("status", is("OK"))
+//			.statusCode(200);
+//		}
+	
+	@Test
 	public void deletarBanner() {
-		Integer id = BannerService.createBanner();
+		Integer id = SponsorshipService.createBanner();
 		
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -114,5 +279,63 @@ public class SponsorshipTest extends Environment{
 		.assertThat()
 			.statusCode(200)
 			;
+	}
+	
+	@Test
+	public void naoDeletarBannerSemToken() {
+		Integer id = SponsorshipService.createBanner();
+		
+		given()
+			.pathParam("id", id)
+		.when()
+			.delete(SPONSORSHIP_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401)
+			;
+		deleteBanner(id);
+	}
+	
+	@Test
+	public void naoDeletarBannerComIdInvalido() {
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", invalidId)
+		.when()
+			.delete(SPONSORSHIP_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Banner not found"))
+			.statusCode(400);
+	}
+	
+	@Test
+	public void naoDeletarBannerQueJaFoiDeletado() {
+		Integer id = SponsorshipService.createBanner();
+		
+		deleteBanner(id);
+		
+		given()
+			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", id)
+		.when()
+			.delete(SPONSORSHIP_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Banner not found"))
+			.statusCode(400);
 	}
 }

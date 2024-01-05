@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import model.Authentication;
 import services.Environment;
-import static utils.Data.*;
+
+import static constants.Data.*;
 import static constants.Endpoints.PASSWORD_RESET_CHECK;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.is;
@@ -17,8 +18,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void usarCodigoDeReset() {
-		resetCheck.setLogin(ValidLogin);
-		resetCheck.setValidationCode(ValidCode);;
+		resetCheck.setLogin(validLogin);
+		resetCheck.setValidationCode(validCode);
 		
 		given()
 			.body(resetCheck)
@@ -37,8 +38,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetInvalido() {
-		 resetCheck.setLogin(ValidLogin);
-		 resetCheck.setValidationCode(InvalidCode);
+		 resetCheck.setLogin(validLogin);
+		 resetCheck.setValidationCode(invalidCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -55,8 +56,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetVazio() {
-		 resetCheck.setLogin(ValidLogin);
-		 resetCheck.setValidationCode(BlankCode);
+		 resetCheck.setLogin(validLogin);
+		 resetCheck.setValidationCode(blankCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -73,8 +74,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetEmBranco() {
-		 resetCheck.setLogin(ValidLogin);
-		 resetCheck.setValidationCode(EmptyCode);
+		 resetCheck.setLogin(validLogin);
+		 resetCheck.setValidationCode(emptyCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -91,8 +92,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailInvalido() {
-		 resetCheck.setLogin(InvalidLogin);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLogin);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -109,8 +110,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailEmCAPSLOCK() {
-		 resetCheck.setLogin(InvalidLoginCAPSLOCK);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginCAPSLOCK);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -127,8 +128,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailEmCAPSLOCKAntesdoArroba() {
-		 resetCheck.setLogin(InvalidLoginCAPSLOCK2);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginCAPSLOCK2);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -145,8 +146,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailEmCAPSLOCKDepoisdoArroba() {
-		 resetCheck.setLogin(InvalidLoginCAPSLOCK3);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginCAPSLOCK3);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -163,8 +164,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailSemArroba() {
-		 resetCheck.setLogin(InvalidLoginWithoutAT);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginWithoutAT);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -181,8 +182,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailEmBranco() {
-		 resetCheck.setLogin(BlankLogin);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(blankLogin);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -199,8 +200,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailVazio() {
-		 resetCheck.setLogin(EmptyLogin);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(emptyLogin);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -216,9 +217,9 @@ public class ResetCheckTest extends Environment {
 	}
 	
 	@Test
-	public void naoUsarCodigoDeResetValidoComEmailSemDominio() {
-		 resetCheck.setLogin(InvalidLoginWithoutExtension);
-		 resetCheck.setValidationCode(ValidCode);
+	public void naoUsarCodigoDeResetValidoComEmailSemDominio_BUG() {
+		 resetCheck.setLogin(invalidLoginWithoutExtension);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -235,8 +236,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailComCaracterEspecialAntesDoArroba() {
-		 resetCheck.setLogin(InvalidLoginEmoji);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginEmoji);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -253,8 +254,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailComCaracterEspecialDepoisDoArroba() {
-		 resetCheck.setLogin(InvalidLoginEmoji2);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginEmoji2);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -271,8 +272,8 @@ public class ResetCheckTest extends Environment {
 	
 	@Test
 	public void naoUsarCodigoDeResetValidoComEmailComEspaçosEmBranco() {
-		 resetCheck.setLogin(InvalidLoginWithBlankChars);
-		 resetCheck.setValidationCode(ValidCode);
+		 resetCheck.setLogin(invalidLoginWithBlankChars);
+		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
 			.body(resetCheck)
@@ -286,7 +287,6 @@ public class ResetCheckTest extends Environment {
 			.body("messages[0].text", is("User not found"))
 			.statusCode(404);
 	}
-
 
 
 }

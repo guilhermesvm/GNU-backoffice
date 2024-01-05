@@ -1,13 +1,14 @@
+
 package services;
 
 import lombok.Getter;
 import lombok.Setter;
-import model.Authentication;
 import model.User;
+
+import static constants.DataFaker.*;
 import static constants.Endpoints.DELETE_USER;
 import static constants.Endpoints.USERS;
 import static io.restassured.RestAssured.given;
-import static utils.DataFaker.*;
 import static services.LoginService.login;
 
 @Getter
@@ -15,24 +16,19 @@ import static services.LoginService.login;
 public class UserService {
 	public static User user = new User();
 	public static User alteracao = new User();
-	public static Authentication login = new Authentication();
 
-	
-	public static User createUser() {
+	public static User creatingUser() {
 		user.setEmail(fakerEmail);
 		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
+		user.setAdminSectionsIds(fakerAdminSectionIds);
 		user.setSubjectIds(fakerSubjectsIds);
 		return user;
 	}
 	
-	public static Integer creatingUser() {
+	public static Integer createUser() {
 		String accessToken = login();
 
-		user.setEmail(fakerEmail);
-		user.setName(fakerName);
-		user.setAdminSectionIds(fakerAdminSectionIds);
-		user.setAdminSectionIds(fakerSubjectsIds);
+		user = creatingUser();
 		
 		Integer id =
 		given()
@@ -41,7 +37,6 @@ public class UserService {
 		.when()
 			.post(USERS)
 		.then()
-			.log().all()
 			.extract().path("content.id")
 			;
 		return id;
@@ -50,20 +45,23 @@ public class UserService {
 	public static User updateUser(boolean status) {
 		alteracao.setName(fakerName);
 		alteracao.setActive(status);
-		alteracao.setAdminSectionIds(fakerAdminSectionIds);
+		alteracao.setActiveFaker(fakerActive);
+		alteracao.setAdminSectionsIds(fakerAdminSectionIds);
 		alteracao.setSubjectIds(fakerSubjectsIds);
 		return alteracao;
 	}
 	
 	
-	
-	public static void deletingUser(Integer id) {
+	public static void deleteUser(Integer id) {
 		String accessToken = login();
 		given()
-			.pathParam("id", id)
 			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", id)
 		.when()
 			.delete(DELETE_USER)
+		.then()
+			.log().all()
+			.statusCode(200)
 			;
 	}
 }

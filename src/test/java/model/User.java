@@ -7,14 +7,20 @@ import lombok.Data;
 
 @Data
 public class User {
+	
 	private String email;
 	private String name;
-	private List<Integer> adminSectionIds;
+	private List<Integer> adminSectionsIds;
 	private List<Integer> subjectIds;
-
+	
+	
 	private Boolean active;
+	private Boolean activeFaker;
+	
+	
 	private String newPassword;
 	
 	@JsonProperty(value ="id", access = Access.WRITE_ONLY) 
-	private Integer id;	//Será lido na desserialização
+	private Integer id;	
+
 }

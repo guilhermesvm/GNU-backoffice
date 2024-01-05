@@ -1,13 +1,11 @@
 package test.HomeImages;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
-import model.Authentication;
+import org.junit.jupiter.api.Test;
 import services.Environment;
-import services.HomeImageService;
-import static utils.Data.*;
 import java.io.File;
+
+import static services.HomeImageService.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -15,19 +13,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static services.LoginService.login;
+import static constants.Data.*;
 import static constants.Endpoints.*;
 
 public class HomeImagesTest extends Environment{
-	public static Authentication login = new Authentication();
-
-	public String accessToken = login.getToken();
-	
-	@BeforeAll
-	public static void fazerLogin() {
-		String token = login();
-		login.setToken(token);
-	}
-	
+	public String accessToken = login();
 	
 	@Test
 	public void listarImagens() {
@@ -66,13 +56,13 @@ public class HomeImagesTest extends Environment{
 	
 	@Test
 	public void criarImagem() {
-		File img = new File(file);
+		File img = new File(filePNG);
 		
 		Integer id =
 		given()
-			.multiPart("file", img)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
+			.multiPart("file", img, "image/png")
 		.when()
 			.post(HOME_IMAGES)
 		.then()
@@ -88,19 +78,21 @@ public class HomeImagesTest extends Environment{
 			.body(containsString("status"))
 			.body("status", is("Created"))
 			.statusCode(201)
-				.extract().path("content.id")
-		;
-		HomeImageService.deleteFile(id);
+		.and()
+			.extract().path("content.id")
+			;
+		deleteImage(id);
 	}
+
 	
 	@Test
 	public void naoCriarImagemSemToken() {
-		File img = new File(file);
+		File img = new File(filePNG);
 		
 		given()
-			.multiPart("file", img)
 			.header("Authorization", "Bearer " + emptyToken)
 			.contentType("multipart/form-data")
+			.multiPart("file", img, "image/png")
 		.when()
 			.post(HOME_IMAGES)
 		.then()
@@ -111,60 +103,51 @@ public class HomeImagesTest extends Environment{
 			.body("Messages", is(not(nullValue())))
 			.body("Messages[0].Text", is("Unauthorized Access"))
 			.statusCode(401);
-			;
 	}
 	
 	@Test
-	public void naoCriarImagemFormatoInvalidoGIF_BUG() {
-		File gif = new File(invalidFile);
+	public void naoCriarImagemFormatoInvalidoGIF() {
+		File gif = new File(invalidFileGIF);
 		
-		Integer id =
 		given()
-			.multiPart("file", gif)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
+			.multiPart("file", gif, "image/gif")
 		.when()
 			.post(HOME_IMAGES)
 		.then()
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			//.body(containsString("Messages"))
-			//.body("Messages", is(not(nullValue())))
-			//.body("Messages[0].Text", is("Unauthorized Access"))
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		HomeImageService.deleteFile(id);
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("File type not supported"))
+			.statusCode(400);
 	}
 	
 	@Test
-	public void naoCriarImagemFormatoInvalidoMP3_BUG() {
-		File mp3 = new File(invalidFile);
+	public void naoCriarImagemFormatoInvalidoMP3() {
+		File mp3 = new File(invalidFileGIF);
 		
-		Integer id =
 		given()
-			.multiPart("file", mp3)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
+			.multiPart("file", mp3, "image/mpeg")
 		.when()
 			.post(HOME_IMAGES)
 		.then()
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			//.body(containsString("Messages"))
-			//.body("Messages", is(not(nullValue())))
-			//.body("Messages[0].Text", is("Unauthorized Access"))
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		HomeImageService.deleteFile(id);
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("File type not supported"))
+			.statusCode(400);
 	}
 	
 	@Test
 	public void deletarImagemSaudacao() {
-		Integer id = HomeImageService.createFile();
+		Integer id = createImage();
 		
 		given()
 			.pathParam("id", id)
@@ -176,13 +159,14 @@ public class HomeImagesTest extends Environment{
 		.assertThat()
 			.body(is(not(nullValue())))
 			.body("status", is("OK"))
-			.statusCode(200)
-			;
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Image deleted"))
+			.statusCode(200);
 		}
 	
 	@Test
 	public void naoDeletarImagemSemToken() {
-		Integer id = HomeImageService.createFile();
+		Integer id = createImage();
 		
 		given()
 			.pathParam("id", id)
@@ -196,15 +180,15 @@ public class HomeImagesTest extends Environment{
 			.body(containsString("Messages"))
 			.body("Messages", is(not(nullValue())))
 			.body("Messages[0].Text", is("Unauthorized Access"))
-			.statusCode(401);
+			.statusCode(401)
 			;
-		HomeImageService.deleteFile(id);
+			deleteImage(id);
 		}
 	
 	@Test
 	public void naoDeletarImagemComIdInvalido() {
 		given()
-			.pathParam("id", InvalidId)
+			.pathParam("id", invalidId)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()	
 			.delete(HOME_IMAGES_ID)
@@ -212,11 +196,35 @@ public class HomeImagesTest extends Environment{
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("Messages"))
-			.body("Messages", is(not(nullValue())))
-			.body("Messages[0].Text", is("Unauthorized Access"))
-			.statusCode(400)
-			;
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Image not found"))
+			.statusCode(400);
+		}
+	
+	@Test
+	public void naoDeletarImagemSaudacaoQueJaFoiDeletada() {
+		Integer id = createImage();
+		
+		deleteImage(id);
+		
+		given()
+			.pathParam("id", id)
+			.header("Authorization", "Bearer " + accessToken)
+		.when()
+			.delete(HOME_IMAGES_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Image not found"))
+			.statusCode(400);
+	;
+		
+		
+		
 		}
 
 }

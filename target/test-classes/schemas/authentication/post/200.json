@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "roles",
+        "token"
+      ]
+    },
+    "exception": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string" }
+      ]
+    },
+    "status": {
+      "type": "string"
+    },
+    "isSuccessStatus": {
+      "type": "boolean"
+    },
+    "messages": {
+      "type": "array",
+      "items": {}
+    }
+  },
+  "required": [
+    "content",
+    "status",
+    "isSuccessStatus",
+    "messages"
+  ]
+}

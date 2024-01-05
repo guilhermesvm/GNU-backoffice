@@ -24,4 +24,9 @@ public class Environment {
 		
 		enableLoggingOfRequestAndResponseIfValidationFails();
 	}
+	
+//	@BeforeEach
+//	public static void initializeRest() {
+//		BaseRest rest = new BaseRest();
+//	}
 }
