@@ -532,7 +532,7 @@ public class UserTest extends Environment {
 	@Test
 	public void naoCriarUsuarioComNomeEmBranco() {	
 		user.setEmail(fakerEmail);
-		user.setName(emptyName);
+		user.setName(blank);
 		user.setAdminSectionsIds(fakerAdminSectionIds);
 		user.setSubjectIds(fakerSubjectsIds);
 		
@@ -556,7 +556,7 @@ public class UserTest extends Environment {
 	@Test
 	public void naoCriarUsuarioComNomeVazio() {	
 		user.setEmail(fakerEmail);
-		user.setName(blankName);
+		user.setName(empty);
 		user.setAdminSectionsIds(fakerAdminSectionIds);
 		user.setSubjectIds(fakerSubjectsIds);
 		
@@ -753,7 +753,7 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoAlterarUsuarioApenasNomeVazio_BUG() {
-		alteracao.setName(blankName);
+		alteracao.setName(empty);
 
 		given()
 			.header("Authorization", "Bearer " + accessToken)
@@ -775,7 +775,7 @@ public class UserTest extends Environment {
 	
 	@Test
 	public void naoAlterarUsuarioApenasNomeEmBranco() {
-		alteracao.setName(emptyName);
+		alteracao.setName(blank);
 
 		given()
 			.header("Authorization", "Bearer " + accessToken)

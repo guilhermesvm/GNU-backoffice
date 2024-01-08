@@ -221,10 +221,6 @@ public class HomeImagesTest extends Environment{
 			.body("messages", is(not(nullValue())))
 			.body("messages[0].text", is("Image not found"))
 			.statusCode(400);
-	;
-		
-		
-		
-		}
+	}
 
 }

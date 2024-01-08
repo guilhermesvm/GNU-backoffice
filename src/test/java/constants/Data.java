@@ -44,10 +44,9 @@ public class Data {
 	public static final String emptyCode = " ";
 	
 	//Invalid Name
-	public static final String blankName = "";
-	public static final String emptyName = "     ";
 	public static final String shortName = "A";
 	public static final String longName = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	
 	
 	//HomeImages
 	public static final String fileJPG = "src/test/resources/img/test.jpeg";
@@ -78,8 +77,10 @@ public class Data {
 	public static final String passwordToken = "token";
 	
 	//Misc
-	public static final String emoji = "😃";
-	public static final String specialChar = "Ж";
+	public static final String emoji = "Teste😃";
+	public static final String specialChar = "TesteЖ";
+	public static final String empty = "";
+	public static final String blank = "     ";
 	
 	
 	
