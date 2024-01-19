@@ -4,7 +4,7 @@ package test.HomeImages;
 import org.junit.jupiter.api.Test;
 import services.Environment;
 import java.io.File;
-
+import static constants.Data.*;
 import static services.HomeImageService.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.containsString;
@@ -12,16 +12,15 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static services.LoginService.login;
-import static constants.Data.*;
 import static constants.Endpoints.*;
+import static constants.Data.accessToken;
 
-public class HomeImagesTest extends Environment{
-	public String accessToken = login();
+public class HomeImagesTest extends Environment{;
 	
 	@Test
 	public void listarImagens() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(HOME_IMAGES)
@@ -41,7 +40,25 @@ public class HomeImagesTest extends Environment{
 	@Test
 	public void naoListarImagensSemToken() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+		.when()
+			.get(HOME_IMAGES)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoListarImagensSemApiKey() {
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(HOME_IMAGES)
 		.then()
@@ -60,6 +77,7 @@ public class HomeImagesTest extends Environment{
 		
 		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("file", img, "image/png")
@@ -90,7 +108,29 @@ public class HomeImagesTest extends Environment{
 		File img = new File(filePNG);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+			.contentType("multipart/form-data")
+			.multiPart("file", img, "image/png")
+		.when()
+			.post(HOME_IMAGES)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoCriarImagemSemApiKey() {
+		File img = new File(filePNG);
+		
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("file", img, "image/png")
 		.when()
@@ -110,6 +150,7 @@ public class HomeImagesTest extends Environment{
 		File gif = new File(invalidFileGIF);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("file", gif, "image/gif")
@@ -130,6 +171,7 @@ public class HomeImagesTest extends Environment{
 		File mp3 = new File(invalidFileGIF);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("file", mp3, "image/mpeg")
@@ -150,8 +192,9 @@ public class HomeImagesTest extends Environment{
 		Integer id = createImage();
 		
 		given()
-			.pathParam("id", id)
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", id)
 		.when()	
 			.delete(HOME_IMAGES_ID)
 		.then()
@@ -169,6 +212,7 @@ public class HomeImagesTest extends Environment{
 		Integer id = createImage();
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.pathParam("id", id)
 			.header("Authorization", "Bearer " + emptyToken)
 		.when()	
@@ -180,14 +224,33 @@ public class HomeImagesTest extends Environment{
 			.body(containsString("Messages"))
 			.body("Messages", is(not(nullValue())))
 			.body("Messages[0].Text", is("Unauthorized Access"))
-			.statusCode(401)
-			;
-			deleteImage(id);
+			.statusCode(401);
+		}
+	
+	@Test
+	public void naoDeletarImagemSemApiKey() {
+		Integer id = createImage();
+		
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.pathParam("id", id)
+			.header("Authorization", "Bearer " + accessToken)
+		.when()	
+			.delete(HOME_IMAGES_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
 		}
 	
 	@Test
 	public void naoDeletarImagemComIdInvalido() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.pathParam("id", invalidId)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()	
@@ -209,6 +272,7 @@ public class HomeImagesTest extends Environment{
 		deleteImage(id);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.pathParam("id", id)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()

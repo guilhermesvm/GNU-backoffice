@@ -26,9 +26,9 @@ public class DataFaker {
 	public static String typeFaker = randomType();
 	
 	//Invalid User Name
-	public static final String InvalidFakerNameEmoji = faker.name().firstName() + "😎" + faker.name().lastName();
-	public static final String InvalidFakerNameSpecial = "!"+ faker.name().firstName() + "Ж" + faker.name().lastName();
-	public static final String InvalidFakerNameNumber = 1 + faker.name().firstName() + " "+ faker.name().lastName();	
+	public static String invalidFakerNameEmoji = faker.name().firstName() + "😎" + faker.name().lastName();
+	public static String invalidFakerNameSpecial = "!"+ faker.name().firstName() + "Ж" + faker.name().lastName();
+	public static String invalidFakerNameNumber = 1 + faker.name().firstName() + " "+ faker.name().lastName();	
 	
 	//AdminSection 
 	public static String fakerAdminSection = faker.lorem().word();

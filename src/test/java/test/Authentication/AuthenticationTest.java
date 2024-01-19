@@ -20,19 +20,40 @@ public class AuthenticationTest extends Environment{
 		login = loginAccount();
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
 		.then()
 			.log().all()
 		.assertThat()
-			.statusCode(200)
+			.statusCode(400)
 			.body(is(not(nullValue())))
 			.body(containsString("content"))
 			.body("content.token", is(not(nullValue())))
 			.body("content.token", matchesPattern("^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+$"))
 			.body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/authentication/post/200.json"));
-	}		
+	}
+	
+	@Test
+	public void naoFazerLoginSemApiKey() {
+		login = loginAccount();
+		
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.body(login)
+		.when()
+			.post(AUTHENTICATION)
+		.then()
+			.log().all()
+		.assertThat()
+			.statusCode(401)
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}	
 	
 	@Test
 	public void naoFazerLoginComEmailInvalido() {
@@ -40,6 +61,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -54,6 +76,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(invalidPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -68,6 +91,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -82,6 +106,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -96,6 +121,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -110,6 +136,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(invalidPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -124,6 +151,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -138,6 +166,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(blankPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -152,6 +181,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -166,6 +196,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(blankPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -180,6 +211,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(emptyPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -194,6 +226,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -208,6 +241,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(emptyPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -222,6 +256,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -236,6 +271,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -250,6 +286,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)
@@ -264,6 +301,7 @@ public class AuthenticationTest extends Environment{
 		login.setPassword(validPassword);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)

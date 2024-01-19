@@ -5,6 +5,7 @@ import static dynamicfactory.UserData.Eventos;
 import static dynamicfactory.UserData.Marketing;
 import static dynamicfactory.UserData.Master;
 import static dynamicfactory.UserData.Ouvidoria;
+import static services.LoginService.login;
 
 import java.util.List;
 
@@ -71,10 +72,14 @@ public class Data {
 	public static final List<Integer> Esportiva =  Esportiva();
 	
 	//Invalid Tokens
-	public static final String usedFirstAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoie1wiSWRcIjowLFwiTmFtZVwiOlwiRGF2aSBMdWNhIGRhIFZlaWdhXCIsXCJFbWFpbFwiOlwiYm9oZXJlMjIyNEB1YmluZXJ0LmNvbVwiLFwiQ29kZVwiOlwiMDU4NTg0XCIsXCJWYWxpZENvZGVcIjpmYWxzZSxcIlJvbGVzXCI6bnVsbCxcIlRva2VuXCI6bnVsbH0iLCJuYmYiOjE3MDM2OTk5MjEsImV4cCI6MTcwMzc4NjMyMSwiaWF0IjoxNzAzNjk5OTIxfQ.OMligixRKh__tK0sKsQ4CXo6QQHYOty0-5Ya5xp4m8I";
+	public static final String accessToken = login();
+	public static final String apiKey = "761612b7-b751-4c25-87cd-ec745a2b342e";
 	public static final String emptyToken = null;
+	public static final String invalidApiKey = "761612b7";
+	public static final String usedFirstAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoie1wiSWRcIjowLFwiTmFtZVwiOlwiRGF2aSBMdWNhIGRhIFZlaWdhXCIsXCJFbWFpbFwiOlwiYm9oZXJlMjIyNEB1YmluZXJ0LmNvbVwiLFwiQ29kZVwiOlwiMDU4NTg0XCIsXCJWYWxpZENvZGVcIjpmYWxzZSxcIlJvbGVzXCI6bnVsbCxcIlRva2VuXCI6bnVsbH0iLCJuYmYiOjE3MDM2OTk5MjEsImV4cCI6MTcwMzc4NjMyMSwiaWF0IjoxNzAzNjk5OTIxfQ.OMligixRKh__tK0sKsQ4CXo6QQHYOty0-5Ya5xp4m8I";
 	public static final String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoie1wiSWRcIjozMSxcIlJvbGVzXCI6W1wibWFzdGVyXCJdLFwiTmFtZVwiOlwiR3VpbGhlcm1lIE1hY2hhZG9cIixcIkVtYWlsXCI6XCJndWlsaGVybWUubWFjaGFkb0BkaWdpdGFsYnVzaW5lc3MuY29tLmJyXCIsXCJDb2RlXCI6XCI0NjI0MjlcIixcIlRva2VuXCI6bnVsbH0iLCJuYmYiOjE3MDQyOTAwMTcsImV4cCI6MTcwNDM3NjQxNywiaWF0IjoxNzA0MjkwMDE3fQ.iLOVD5AWKGURNo5W5TEg0wFbyse2ONOrT1kfae-WqwE";
 	public static final String passwordToken = "token";
+	
 	
 	//Misc
 	public static final String emoji = "Teste😃";

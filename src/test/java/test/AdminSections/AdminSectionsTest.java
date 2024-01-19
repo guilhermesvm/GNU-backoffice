@@ -2,29 +2,26 @@ package test.AdminSections;
 
 import org.junit.jupiter.api.Test;
 import model.AdminSection;
-import static services.AdminSectionService.*;
 import services.Environment;
-
-import static services.AdminSectionService.deleteAdminSection;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static services.AdminSectionService.*;
+import static services.AdminSectionService.deleteAdminSection;
 import static constants.Data.*;
 import static constants.DataFaker.*;
 import static constants.Endpoints.*;
-import static services.LoginService.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class AdminSectionsTest extends Environment {
-	public String accessToken = login();
 	public AdminSection section = new AdminSection();
 	
 	@Test
 	public void listarAdminSections() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(ADMIN_SECTIONS)
@@ -51,7 +48,26 @@ public class AdminSectionsTest extends Environment {
 	@Test
 	public void naoListarAdminSectionsSemToken() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+		.when()
+			.get(ADMIN_SECTIONS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+		;
+	}
+	
+	@Test
+	public void naoListarAdminSectionsSemApiKey() {
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(ADMIN_SECTIONS)
 		.then()
@@ -68,6 +84,7 @@ public class AdminSectionsTest extends Environment {
 	@Test
 	public void listarAdminSectionId() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", 1)
 		.when()
@@ -90,7 +107,27 @@ public class AdminSectionsTest extends Environment {
 	@Test
 	public void naoListarAdminSectionIdSemToken() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+			.pathParam("id", 1)
+		.when()
+			.get(ADMIN_SECTIONS_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+		;
+	}
+	
+	@Test
+	public void naoListarAdminSectionIdSemApiToken() {
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", 1)
 		.when()
 			.get(ADMIN_SECTIONS_ID)
@@ -108,6 +145,7 @@ public class AdminSectionsTest extends Environment {
 	@Test
 	public void naoListarAdminSectionIdComIdInvalido() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", invalidId)
 		.when()
@@ -130,6 +168,7 @@ public class AdminSectionsTest extends Environment {
 	
 		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -159,6 +198,7 @@ public class AdminSectionsTest extends Environment {
 		 section = creatingAdminSection();
 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
 			.body(section)
 		.when()
@@ -174,14 +214,54 @@ public class AdminSectionsTest extends Environment {
 	}
 	
 	@Test
-	public void naoCriarAdminSectionComNomeDeSectionJaExistente_BUG() {
+	public void naoCriarAdminSectionSemApiToken() {
+		 section = creatingAdminSection();
+
+		 given()
+		 	.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
+			.body(section)
+		.when()
+			.post(ADMIN_SECTIONS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoCriarAdminSectionSemApiKey() {
+		 section = creatingAdminSection();
+
+		 given()
+		 	.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
+			.body(section)
+		.when()
+			.post(ADMIN_SECTIONS)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoCriarAdminSectionComNomeDeSectionJaExistente() {
 		List<String> esportiva = new ArrayList<>(Arrays.asList("esportiva"));
 		
 		section.setName("Esportiva");
 		section.setRoles(esportiva);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -189,19 +269,22 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("AdminSection/Group already registered"))
+			.statusCode(400);
 			;
-		deleteAdminSection(id);
+
 	}
 	
 	@Test
-	public void naoCriarAdminSectionComEmojiNoNome_BUG() {
+	public void naoCriarAdminSectionComEmojiNoNome() {
 		section.setName(emoji);
 		section.setRoles(fakerAdminRole);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -209,19 +292,21 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in invalid format"))
+			.statusCode(400);
+
 	}
 	
 	@Test
-	public void naoCriarAdminSectionComCaracterEspecialNoNome_BUG() {
+	public void naoCriarAdminSectionComCaracterEspecialNoNome() {
 		section.setName(specialChar);
 		section.setRoles(fakerAdminRole);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -229,60 +314,67 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in invalid format"))
+			.statusCode(400);
+			
 	}
 	
 	
 	@Test
-	public void naoCriarAdminSectionComEspaçosEmBrancoNoNome_MELHORIA() {
+	public void naoCriarAdminSectionComEspaçosEmBrancoNoNome() {
 		section.setName(empty);
 		section.setRoles(fakerAdminRole);
 		
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
 			.post(ADMIN_SECTIONS)
 		.then()
-			.log().all();
-//		.assertThat()
-//			.statusCode(400)
-//			.extract().path("content.id")
-//			;
-//		deleteAdminSection(id);
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in invalid format"))
+			.statusCode(400);
 	}
 	
 	@Test
-	public void naoCriarAdminSectionComNomeVazio_MELHORIA() {
+	public void naoCriarAdminSectionComNomeVazio() {
 		section.setName(empty);
 		section.setRoles(fakerAdminRole);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
 			.post(ADMIN_SECTIONS)
 		.then()
-			.log().all();
-//		.assertThat()
-//			.statusCode(400)
-//			.extract().path("content.id")
-//			;
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Name in invalid format"))
+			.statusCode(400);
 	}
 	
 	@Test
-	public void naoCriarAdminSectionRoleComEmoji_BUG() {
+	public void naoCriarAdminSectionRoleComEmoji() {
 		List<String> role = new ArrayList<>(Arrays.asList(emoji));
 		
 		section.setName(fakerAdminSection);
 		section.setRoles(role);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -290,21 +382,22 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Role in wrong format"))
+			.statusCode(400);
 	}
 	
 	@Test
-	public void naoCriarAdminSectionRoleComCaracterEspecial_BUG() {
+	public void naoCriarAdminSectionRoleComCaracterEspecial() {
 		List<String> role = new ArrayList<>(Arrays.asList(specialChar));
 		
 		section.setName(fakerAdminSection);
 		section.setRoles(role);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -312,21 +405,22 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Role in wrong format"))
+			.statusCode(400);
 	}
 
 	@Test
-	public void naoCriarAdminSectionRoleVazia_BUG() {
+	public void naoCriarAdminSectionRoleVazia() {
 		List<String> role = new ArrayList<>(Arrays.asList(empty));
 		
 		section.setName(fakerAdminSection);
 		section.setRoles(role);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -334,21 +428,22 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Role in wrong format"))
+			.statusCode(400);
 	}
 	
 	@Test
-	public void naoCriarAdminSectionRoleComEspaçoEmBranco_BUG() {
+	public void naoCriarAdminSectionRoleComEspaçoEmBrancos() {
 		List<String> role = new ArrayList<>(Arrays.asList(blank));
 		
 		section.setName(fakerAdminSection);
 		section.setRoles(role);
 		
-		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(section)
 		.when()
@@ -356,30 +451,55 @@ public class AdminSectionsTest extends Environment {
 		.then()
 			.log().all()
 		.assertThat()
-			//.statusCode(400)
-			.extract().path("content.id")
-			;
-		deleteAdminSection(id);
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Role in wrong format"))
+			.statusCode(400);
 	}
 	
 	@Test
 	public void deletarAdminSection() {
 		Integer id = createAdminSection();
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", id)
 		.when()
 			.delete(ADMIN_SECTIONS_ID)
 		.then()
 			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("Section deleted successfully"))
 			.statusCode(200);
 	}
 	
 	@Test
 	public void naoDeletarAdminSectionSemToken() {
-		//Integer id = createAdminSection();
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+			.pathParam("id", invalidId)
+		.when()
+			.delete(ADMIN_SECTIONS_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoDeletarAdminSectionSemApiKey() {
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", invalidId)
 		.when()
 			.delete(ADMIN_SECTIONS_ID)
@@ -396,6 +516,7 @@ public class AdminSectionsTest extends Environment {
 	@Test
 	public void naoDeletarAdminSectionComIdInvalido() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", invalidId)
 		.when()
@@ -417,6 +538,7 @@ public class AdminSectionsTest extends Environment {
 		deleteAdminSection(id);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", id)
 		.when()

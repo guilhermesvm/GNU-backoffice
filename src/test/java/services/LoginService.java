@@ -24,6 +24,7 @@ public class LoginService {
 		
 		String token =
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(login)
 		.when()
 			.post(AUTHENTICATION)

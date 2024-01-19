@@ -8,6 +8,7 @@ import model.Authentication;
 import static constants.Data.*;
 import static constants.Endpoints.*;
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -20,6 +21,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(validLogin2);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -33,10 +35,32 @@ public class PasswordResetTest extends Environment{
 	}
 	
 	@Test
+	public void naoResetarSenhaSemApiKey() {
+		reset.setLogin(validLogin2);
+	
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.body(reset)
+		.when()
+			.post(PASSWORD_RESET)
+		.then()
+			.log().all()
+		.assertThat()
+			.statusCode(401)
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+
+	}
+	
+	@Test
 	public void naoResetarSenhaComLoginInexistente() {
 		reset.setLogin(invalidLogin);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -54,6 +78,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginCAPSLOCK);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -71,6 +96,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginCAPSLOCK2);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -88,6 +114,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginCAPSLOCK3);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -105,6 +132,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginWithoutAT);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -122,6 +150,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(blankLogin);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -139,6 +168,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(emptyLogin);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -152,10 +182,11 @@ public class PasswordResetTest extends Environment{
 	}
 	
 	@Test
-	public void naoResetarSenhaComEmailSemPontoCom_BUG() {
+	public void naoResetarSenhaComEmailSemPontoCom() {
 		reset.setLogin(invalidLoginWithoutExtension);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -173,6 +204,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginEmoji);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -190,6 +222,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginEmoji2);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)
@@ -207,6 +240,7 @@ public class PasswordResetTest extends Environment{
 		reset.setLogin(invalidLoginWithBlankChars);
 	
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(reset)
 		.when()
 			.post(PASSWORD_RESET)

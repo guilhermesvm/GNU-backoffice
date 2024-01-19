@@ -23,6 +23,7 @@ public class SponsorshipService {
 	
 		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 	        .multiPart("file", banner.getFile())
@@ -40,6 +41,7 @@ public class SponsorshipService {
 	
 	public static void deleteBanner(Integer id) {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", id)
 		.when()

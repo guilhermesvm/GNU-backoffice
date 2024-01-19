@@ -7,7 +7,6 @@ import services.Environment;
 
 import static constants.Data.*;
 import static constants.Endpoints.*;
-import static services.LoginService.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -15,13 +14,13 @@ public class PatchUserAdminSectionTest extends Environment {
 	public static Authentication login = new Authentication();
 	public static User user = new User();
 	public static User alteracao = new User();
-	public String accessToken = login();
 	
 	@Test
 	public void alterarUsuarioApenasAdminSectionMaster() {
 		alteracao.setAdminSectionsIds(Master);
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
 			.pathParam("id", 34)
@@ -31,8 +30,9 @@ public class PatchUserAdminSectionTest extends Environment {
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("status"))
-			.body("status", is("OK"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User updated succesfully"))
 			.statusCode(200);
 	}
 	
@@ -41,6 +41,7 @@ public class PatchUserAdminSectionTest extends Environment {
 		alteracao.setAdminSectionsIds(Marketing);
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
 			.pathParam("id", 34)
@@ -50,8 +51,9 @@ public class PatchUserAdminSectionTest extends Environment {
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("status"))
-			.body("status", is("OK"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User updated succesfully"))
 			.statusCode(200);
 	}
 	
@@ -60,6 +62,7 @@ public class PatchUserAdminSectionTest extends Environment {
 		alteracao.setAdminSectionsIds(Eventos);
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
 			.pathParam("id", 34)
@@ -69,8 +72,9 @@ public class PatchUserAdminSectionTest extends Environment {
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("status"))
-			.body("status", is("OK"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User updated succesfully"))
 			.statusCode(200);
 	}
 	
@@ -79,6 +83,7 @@ public class PatchUserAdminSectionTest extends Environment {
 		alteracao.setAdminSectionsIds(Ouvidoria);
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
 			.pathParam("id", 34)
@@ -88,8 +93,9 @@ public class PatchUserAdminSectionTest extends Environment {
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("status"))
-			.body("status", is("OK"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User updated succesfully"))
 			.statusCode(200);
 	}
 	
@@ -98,6 +104,7 @@ public class PatchUserAdminSectionTest extends Environment {
 		alteracao.setAdminSectionsIds(Esportiva);
 
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(alteracao)
 			.pathParam("id", 34)
@@ -107,8 +114,9 @@ public class PatchUserAdminSectionTest extends Environment {
 			.log().all()
 		.assertThat()
 			.body(is(not(nullValue())))
-			.body(containsString("status"))
-			.body("status", is("OK"))
+			.body(containsString("messages"))
+			.body("messages", is(not(nullValue())))
+			.body("messages[0].text", is("User updated succesfully"))
 			.statusCode(200);
 	}
 	

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: test.Users.PatchUserTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.54 s - in test.Users.PatchUserTest

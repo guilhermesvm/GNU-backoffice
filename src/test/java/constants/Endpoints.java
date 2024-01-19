@@ -35,6 +35,12 @@ public class Endpoints {
 	public static final String ADMIN_SECTIONS = "/api/v1/sections";
 	public static final String ADMIN_SECTIONS_ID = "/api/v1/sections/{id}";
 	
+	//Endpoint Health
+	public static final String HEALTH = "/api/v1/health";
+	
+	//Endpoint Utils
+	public static final String UTILS = "/api/v1/report";
+	
 
 
 }

@@ -9,9 +9,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static services.LoginService.login;
-
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import model.Authentication;
 import services.Environment;
@@ -19,18 +16,13 @@ import services.Environment;
 
 public class EventSpaceReservationTest extends Environment {
 	public static Authentication login = new Authentication();
-	public String accessToken = login.getToken();
-	
-	@BeforeAll
-	public static void fazerLogin() {
-		String token = login();
-		login.setToken(token);
-	}
+
 	
 	
 	@Test
 	public void listarReservas() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(EVENT_RESERVATION)
@@ -50,7 +42,25 @@ public class EventSpaceReservationTest extends Environment {
 	@Test
 	public void naoListarReservasSemToken() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
+		.when()
+			.get(EVENT_RESERVATION)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoListarReservasSemApiKey() {
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
 		.when()
 			.get(EVENT_RESERVATION)
 		.then()
@@ -66,6 +76,7 @@ public class EventSpaceReservationTest extends Environment {
 	@Test
 	public void listarReservasPorId() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", 2)
 		.when()
@@ -85,6 +96,7 @@ public class EventSpaceReservationTest extends Environment {
 	@Test
 	public void naoListarReservasPorIdSemToken() {
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + emptyToken)
 			.pathParam("id", 2)
 		.when()
@@ -100,8 +112,27 @@ public class EventSpaceReservationTest extends Environment {
 	}
 	
 	@Test
-	public void naoListarReservasSemIdValido() {
+	public void naoListarReservasPorIdSemApiKey() {
 		given()
+			.header("x-Api-Key", invalidApiKey)
+			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", 2)
+		.when()
+			.get(EVENT_RESERVATION_ID)
+		.then()
+			.log().all()
+		.assertThat()
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
+	public void naoListarReservasComIdInvalido() {
+		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", invalidId)
 		.when()

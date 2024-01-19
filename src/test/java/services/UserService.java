@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import model.User;
 
+import static constants.Data.apiKey;
 import static constants.DataFaker.*;
 import static constants.Endpoints.DELETE_USER;
 import static constants.Endpoints.USERS;
@@ -32,6 +33,7 @@ public class UserService {
 		
 		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.body(user)
 		.when()
@@ -55,6 +57,7 @@ public class UserService {
 	public static void deleteUser(Integer id) {
 		String accessToken = login();
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.pathParam("id", id)
 		.when()

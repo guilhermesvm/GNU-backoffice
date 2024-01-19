@@ -1,5 +1,6 @@
 package services;
 
+import static constants.Data.apiKey;
 import static constants.Data.fileJPG;
 import static constants.Endpoints.HOME_IMAGES;
 import static constants.Endpoints.HOME_IMAGES_ID;
@@ -20,6 +21,7 @@ public class HomeImageService {
 	public static Integer createImage() {
 		Integer id =
 		given()
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
 			.contentType("multipart/form-data")
 			.multiPart("file", img, "image/jpeg")
@@ -33,8 +35,9 @@ public class HomeImageService {
 	
 	public static void deleteImage(Integer id) {
 		given()
-			.pathParam("id", id)
+			.header("x-Api-Key", apiKey)
 			.header("Authorization", "Bearer " + accessToken)
+			.pathParam("id", id)
 		.when()	
 			.delete(HOME_IMAGES_ID)
 		.then()

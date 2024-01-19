@@ -8,6 +8,7 @@ import services.Environment;
 import static constants.Data.*;
 import static constants.Endpoints.PASSWORD_RESET_CHECK;
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
@@ -22,6 +23,7 @@ public class ResetCheckTest extends Environment {
 		resetCheck.setValidationCode(validCode);
 		
 		given()
+			.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -37,11 +39,33 @@ public class ResetCheckTest extends Environment {
 	}
 	
 	@Test
+	public void naoUsarCodigoDeResetSemApiKey() {
+		resetCheck.setLogin(validLogin);
+		resetCheck.setValidationCode(validCode);
+		
+		given()
+			.header("x-Api-Key", invalidApiKey)
+			.body(resetCheck)
+		.when()
+			.post(PASSWORD_RESET_CHECK)
+		.then()
+			.log().all()
+		.assertThat()
+			.statusCode(401)
+			.body(is(not(nullValue())))
+			.body(containsString("Messages"))
+			.body("Messages", is(not(nullValue())))
+			.body("Messages[0].Text", is("Unauthorized Access"))
+			.statusCode(401);
+	}
+	
+	@Test
 	public void naoUsarCodigoDeResetInvalido() {
 		 resetCheck.setLogin(validLogin);
 		 resetCheck.setValidationCode(invalidCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -60,6 +84,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(blankCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -78,6 +103,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(emptyCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -96,6 +122,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -114,6 +141,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+			.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -132,6 +160,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+			.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -150,6 +179,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -168,6 +198,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -186,6 +217,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -204,6 +236,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -217,11 +250,12 @@ public class ResetCheckTest extends Environment {
 	}
 	
 	@Test
-	public void naoUsarCodigoDeResetValidoComEmailSemDominio_BUG() {
+	public void naoUsarCodigoDeResetValidoComEmailSemDominio() {
 		 resetCheck.setLogin(invalidLoginWithoutExtension);
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -240,6 +274,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -258,6 +293,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 	.header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
@@ -276,6 +312,7 @@ public class ResetCheckTest extends Environment {
 		 resetCheck.setValidationCode(validCode);
 		 
 		 given()
+		 .header("x-Api-Key", apiKey)
 			.body(resetCheck)
 		.when()
 			.post(PASSWORD_RESET_CHECK)
